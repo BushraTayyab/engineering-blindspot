@@ -1,19 +1,29 @@
-from pathlib import Path
 from git import Repo
 
-repo_path = Path(__file__).resolve().parent.parent / "sample_repo"
-repo = Repo(repo_path)
 
-head = repo.head
-commit = head.commit
-parent = commit.parents[0]
-diff = commit.diff(parent)
+def analyze_commit(repo_path):
+    repo = Repo(repo_path)
 
-print(commit.hexsha)
-print(commit.message)
-print(parent)
-print(type(diff))
+    head = repo.head
+    commit = head.commit
 
-for file_diff in diff:
-    print("Old:", file_diff.a_path)
-    print("New:", file_diff.b_path)
+    if not commit.parents:
+        raise ValueError("Cannot analyze root commit")
+
+    parent = commit.parents[0]
+
+    diffs = commit.diff(parent)
+
+    changed_files = []
+
+    for diff in diffs:
+        if diff.change_type == "D":
+            changed_files.append(diff.a_path)
+        else:
+            changed_files.append(diff.b_path)
+
+    return {
+        "commit": commit.hexsha,
+        "message": commit.message.strip(),
+        "changed_files": changed_files
+    }
