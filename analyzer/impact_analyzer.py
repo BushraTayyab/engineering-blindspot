@@ -5,6 +5,7 @@ from analyzer.ast_analyzer import analyze_file
 from analyzer.dependency_analyzer import find_dependents
 from analyzer.test_analyzer import find_related_tests
 
+
 def analyze_impact(repo_path):
     git_result = analyze_commit(repo_path)
 
@@ -19,15 +20,25 @@ def analyze_impact(repo_path):
             repo_path,
             changed_file
         )
+
         related_tests = find_related_tests(
             repo_path,
             changed_file
         )
 
+        # Separate production dependents from test files
+        production_dependents = [
+            file for file in dependents
+            if not (
+                file.startswith("test_")
+                or file.endswith("_test.py")
+            )
+        ]
+
         changes.append({
             "file": changed_file,
             "code": code_result,
-            "dependents": dependents,
+            "dependents": production_dependents,
             "related_tests": related_tests
         })
 
@@ -38,7 +49,8 @@ def analyze_impact(repo_path):
         },
         "changes": changes
     }
-    
+
+
 if __name__ == "__main__":
     result = analyze_impact("sample_repo")
     print(result)
