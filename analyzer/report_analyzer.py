@@ -36,9 +36,9 @@ def generate_report(impact_data):
             "functions": functions,
             "dependents": dependents,
             "related_tests": tests,
+            "diff": change["diff"],
             "risk_signals": risk_signals
         })
-
     return {
         "commit": impact_data["commit"],
         "reports": reports
@@ -48,7 +48,7 @@ def generate_report(impact_data):
 if __name__ == "__main__":
     from analyzer.impact_analyzer import analyze_impact
 
-    impact = analyze_impact("sample_repo")
+    impact = analyze_impact("../blindspot-demo-orders")
     report = generate_report(impact)
 
     print(report)

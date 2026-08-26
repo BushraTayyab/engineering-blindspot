@@ -45,7 +45,7 @@ if __name__ == "__main__":
     from analyzer.impact_analyzer import analyze_impact
     from analyzer.report_analyzer import generate_report
 
-    impact = analyze_impact("sample_repo")
+    impact = analyze_impact("../blindspot-demo-orders")
     report = generate_report(impact)
 
     insight = generate_insight(report)

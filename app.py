@@ -56,6 +56,13 @@ if st.button("Analyze Repository", type="primary"):
                 st.success(f"🟢 {risk} IMPACT")
 
             st.subheader(item["file"])
+            with st.expander("🔍 What changed?"):
+                diff = item.get("diff", "")
+            
+                if diff:
+                    st.code(diff, language="diff")
+                else:
+                    st.warning("No code diff available for this file.")
 
             col1, col2 = st.columns(2)
 

@@ -1,6 +1,6 @@
 from pathlib import Path
 
-from analyzer.git_analyzer import analyze_commit
+from analyzer.git_analyzer import analyze_commit, get_commit_diff
 from analyzer.ast_analyzer import analyze_file
 from analyzer.dependency_analyzer import find_dependents
 from analyzer.test_analyzer import find_related_tests
@@ -8,6 +8,7 @@ from analyzer.test_analyzer import find_related_tests
 
 def analyze_impact(repo_path):
     git_result = analyze_commit(repo_path)
+    diff_result = get_commit_diff(repo_path)
 
     changes = []
 
@@ -39,7 +40,15 @@ def analyze_impact(repo_path):
             "file": changed_file,
             "code": code_result,
             "dependents": production_dependents,
-            "related_tests": related_tests
+            "related_tests": related_tests,
+            "diff": next(
+                (
+                    item["diff"]
+                    for item in diff_result
+                    if item["file"] == changed_file
+                ),
+                ""
+            )
         })
 
     return {
@@ -52,5 +61,5 @@ def analyze_impact(repo_path):
 
 
 if __name__ == "__main__":
-    result = analyze_impact("sample_repo")
+    result = analyze_impact("../blindspot-demo-orders")
     print(result)
